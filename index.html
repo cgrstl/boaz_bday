@@ -1,30 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Boaz's Birthday Countdown</title>
-  <style>
-    /* Center the countdown timer */
-    body {
-      display: flex;
-      height: 100vh;
-      justify-content: center;
-      align-items: center;
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>Boaz's Birthday Countdown</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    /* Birthday background from the start */
+    background-image: url('https://marketplace.canva.com/EAGhbM7XcuY/1/0/1600w/canva-white-and-blue-birthday-background-card-yqLk4e5MQjY.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #003366; /* Dark blue text for readability */
+  }
+  #countdown-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    display: inline-block;
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid #007BFF;
+    margin-top: 40px;
+  }
+  #countdown-widget {
+    width: 250px;
+    margin: 0 auto;
+  }
+  #message, #readyBtn, #nextBtnContainer {
+    display: none;
+    margin-top: 30px;
+  }
+  #readyBtn, #nextBtn {
+    padding: 15px 30px;
+    font-size: 1.1em;
+    cursor: pointer;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 6px;
+    color: white;
+  }
+  #nextBtn {
+    margin-top: 15px;
+  }
+  #canvaLink {
+    margin-top: 10px;
+    font-size: 1em;
+  }
+  #canvaLink a {
+    color: #007BFF;
+    text-decoration: underline;
+  }
+</style>
 </head>
 <body>
-  <!-- Countdown timer widget -->
-  <a href="https://logwork.com/countdown-timer" 
-     class="countdown-timer" 
-     data-timezone="America/Los_Angeles" 
-     data-date="2025-09-21 23:59">
-     Boaz's 30th Birthday
-  </a>
 
-  <!-- Embed the countdown.js script -->
-  <script src="https://cdn.logwork.com/widget/countdown.js"></script>
+<div id="countdown-container">
+  <h1>Countdown to Boaz's Birthday</h1>
+  <div id="countdown-widget">
+    <a href="https://logwork.com/countdown-timer" 
+       class="countdown-timer" 
+       data-timezone="America/Los_Angeles" 
+       data-date="2025-09-21 23:59">
+       Boaz's 30th Birthday
+    </a>
+  </div>
+</div>
+
+<div id="message">
+  <h1>Boaz, are you ready for your birthday surprise?</h1>
+</div>
+<button id="readyBtn">I am ready</button>
+
+<div id="nextBtnContainer">
+  <button id="nextBtn">Click here</button>
+  <div id="canvaLink">
+    <a href="https://www.canva.com/design/your-project-link" target="_blank" rel="noopener noreferrer">
+      Open the Birthday Presentation
+    </a>
+  </div>
+</div>
+
+<script src="https://cdn.logwork.com/widget/countdown.js"></script>
+<script>
+  function showElements(ids) {
+    ids.forEach(id => {
+      document.getElementById(id).style.display = 'block';
+    });
+  }
+  function hideElements(ids) {
+    ids.forEach(id => {
+      document.getElementById(id).style.display = 'none';
+    });
+  }
+  
+  function checkCountdown() {
+    const countdownEl = document.querySelector('.countdown-timer');
+    if (!countdownEl) return;
+    
+    const countdownText = countdownEl.textContent.toLowerCase();
+    
+    if (countdownText.includes('happy birthday') || countdownText.includes('0d 0h 0m') || countdownText.trim() === '') {
+      hideElements(['countdown-container']);
+      showElements(['message', 'readyBtn']);
+      clearInterval(checkInterval);
+    }
+  }
+
+  const checkInterval = setInterval(checkCountdown, 1000);
+
+  document.getElementById('readyBtn').addEventListener('click', () => {
+    hideElements(['readyBtn', 'message']);
+    showElements(['nextBtnContainer']);
+  });
+
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    alert('Have a great birthday, Boaz! The presentation will open in a new tab.');
+  });
+</script>
+
 </body>
 </html>
