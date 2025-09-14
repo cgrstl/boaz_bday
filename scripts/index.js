@@ -451,6 +451,17 @@ x = setInterval(function() {
   if (distance > 0) {
     head.style.display = 'initial';
     count.style.display = 'initial';
+
+    const countdownMusic = document.getElementById('countdown-music');
+    if (countdownMusic) {
+      // Wir versuchen, die Musik zu starten. Falls der Browser es blockiert,
+      // wartet der Code auf eine beliebige Interaktion des Nutzers (Klick).
+      countdownMusic.play().catch(error => {
+        console.log("Autoplay wurde blockiert. Musik startet nach Nutzer-Interaktion.");
+        document.body.addEventListener('click', () => countdownMusic.play(), { once: true });
+      });
+    }
+    
   } else {
     head.style.display = 'none';
     count.style.display = 'none';
@@ -464,6 +475,21 @@ x = setInterval(function() {
     function init() {
       box.addEventListener('click', openBox, false);
       box.addEventListener('click', showfireworks, false);
+      box.addEventListener('click', () => {
+        const countdownMusic = document.getElementById('countdown-music');
+        const birthdayMusic = document.getElementById('birthday-music');
+
+        // Stoppe die Countdown-Musik
+        if (countdownMusic) {
+          countdownMusic.pause();
+          countdownMusic.currentTime = 0; // Zurückspulen
+        }
+
+        // Starte die Geburtstags-Musik
+        if (birthdayMusic) {
+          birthdayMusic.play();
+        }
+      }, { once: true });
     }
 
     function stepClass(step) {
