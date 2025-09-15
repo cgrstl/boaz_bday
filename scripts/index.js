@@ -1,8 +1,4 @@
-window.addEventListener('pageshow', function(event) {
-  if (event.persisted) {
-    window.location.reload();
-  }
-});
+// HINWEIS: Der 'pageshow' (bfcache) Hack wurde entfernt.
 
 const count = document.getElementById('count');
 const head = document.getElementById('head');
@@ -80,7 +76,7 @@ let x = setInterval(function() {
       }
       musicButtonSetupDone = true;
     }
-}    
+  } // <--- KORREKTUR 1: Die Klammer sitzt jetzt HIER (vor dem 'else')
           
   // Dieser Teil läuft, wenn der Countdown abgelaufen ist
   else {
@@ -518,12 +514,8 @@ let x = setInterval(function() {
         }
       }
 
-        // NEU: Zeigt die finalen Buttons sofort an
-        if (finalStepContainer) {
-          finalStepContainer.style.display = 'flex';
-        }
-      }
-
+      // KORREKTUR 2: Der doppelte, fehlerhafte Codeblock wurde von hier entfernt.
+      
       // --- Klick auf "Ready for Birthday wishes" (Startet alles) ---
       wishesBtn.addEventListener('click', () => {
         // 1. Musik ausblenden (falls sie läuft)
@@ -591,6 +583,7 @@ let x = setInterval(function() {
         const appUrl = `maps://?daddr=${encodedDestination}`;
 
         // Web-Fallback-Link (falls die App nicht da ist oder auf Desktop)
+        // KORREKTUR 3: Das '$' wurde hinzugefügt
         const webUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedDestination}`;
 
         // Versucht, die App zu öffnen, mit Fallback auf die Web-URL
@@ -606,6 +599,16 @@ let x = setInterval(function() {
         } else {
           // Auf Desktop-Geräten
           window.location.href = webUrl;
+        }
+      });
+      
+      // --- Events zum Schließen des Videos ---
+      closeVideoBtn.addEventListener('click', closeVideo);
+      
+      videoOverlay.addEventListener('click', (event) => {
+        // Schließt das Video nur, wenn auf den dunklen Hintergrund geklickt wird
+        if (event.target === videoOverlay) { 
+          closeVideo();
         }
       });
     }
