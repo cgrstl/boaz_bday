@@ -477,13 +477,37 @@ let x = setInterval(function() {
       const videoOverlay = document.getElementById('video-overlay');
       
       if (wishesContainer && wishesBtn && videoOverlay) {
-        wishesBtn.addEventListener('click', () => {
-          videoOverlay.classList.add('visible');
-          wishesContainer.style.display = 'none';
-          setTimeout(() => {
-            if (player && player.playVideo) player.playVideo();
-          }, 500);
-        });
+       // Klick auf den "Wishes"-Button
+      wishesBtn.addEventListener('click', () => {
+        // ======================================================
+        // NEU: Fade-out für die Geburtstagsmusik
+        // ======================================================
+        const birthdayMusic = document.getElementById('birthday-music');
+        if (birthdayMusic && !birthdayMusic.paused) {
+          let currentVolume = birthdayMusic.volume;
+          const fadeOutInterval = setInterval(() => {
+            currentVolume -= 0.1;
+            if (currentVolume < 0) {
+              currentVolume = 0;
+            }
+            birthdayMusic.volume = currentVolume;
+
+            if (birthdayMusic.volume <= 0) {
+              clearInterval(fadeOutInterval);
+              birthdayMusic.pause();
+              birthdayMusic.currentTime = 0;
+            }
+          }, 100); // Reduziert die Lautstärke alle 100ms
+        }
+        // ======================================================
+
+        videoOverlay.classList.add('visible');
+        wishesContainer.style.display = 'none';
+        
+        setTimeout(() => {
+          if (player && player.playVideo) player.playVideo();
+        }, 500); // Warte auf die Fade-in Transition
+      });
         
         videoOverlay.addEventListener('click', (event) => {
           if (event.target === videoOverlay) {
