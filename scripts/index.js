@@ -50,21 +50,31 @@ let x = setInterval(function() {
     document.getElementById('minute').innerText = Math.floor((distance % hour) / minute);
     document.getElementById('second').innerText = Math.floor((distance % minute) / second);
 
-    // Logik für den Musik-Button
+// Logik für den Musik-Button (NEUE TOGGLE-LOGIK)
     if (!musicButtonSetupDone) {
       const countdownMusic = document.getElementById('countdown-music');
       const playMusicBtn = document.getElementById('playMusicBtn');
 
       if (countdownMusic && playMusicBtn) {
         playMusicBtn.style.display = 'inline-block';
+        
+        // Event Listener ohne { once: true }
         playMusicBtn.addEventListener('click', () => {
-          countdownMusic.play();
-          playMusicBtn.style.display = 'none';
-        }, { once: true });
+          
+          // Prüfen, ob die Musik pausiert ist (oder noch nie gestartet wurde)
+          if (countdownMusic.paused) {
+            countdownMusic.play();
+            playMusicBtn.innerText = 'Stop Music'; // Text ändern
+          } else {
+            // Musik läuft bereits, also pausieren
+            countdownMusic.pause();
+            playMusicBtn.innerText = 'Some music while waiting?'; // Originaltext
+          }
+        }); 
       }
       musicButtonSetupDone = true;
     }
-  } 
+          
   // Dieser Teil läuft, wenn der Countdown abgelaufen ist
   else {
     head.style.display = 'none';
