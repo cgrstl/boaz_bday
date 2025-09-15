@@ -472,51 +472,89 @@ let x = setInterval(function() {
       canvasC.style.display = 'initial';
       setTimeout(anim, 1500);
 
+      // --- Alle Elemente holen, die wir brauchen ---
+      const wishesContainer = document.getElementById('wishesBtnContainer');
+      const wishesBtn = document.getElementById('wishesBtn');
+      const videoOverlay = document.getElementById('video-overlay');
+      const closeVideoBtn = document.getElementById('closeVideoBtn'); // Neu
+      
+      const finalStepContainer = document.getElementById('finalStepContainer'); // Neu
+      const rewatchBtn = document.getElementById('rewatchBtn'); // Neu
+      const collectGiftBtn = document.getElementById('collectGiftBtn'); // Neu
+
+      const birthdayMusic = document.getElementById('birthday-music');
+      
+      // Platzhalter-URL für das Geschenk. Ändere dies auf deinen Link.
+      const giftLocationUrl = "https://www.google.com/maps/place/Ein+Ort+deiner+Wahl"; 
+
+      // --- YouTube-Player ---
       window.onYouTubeIframeAPIReady = function() {
         player = new YT.Player('youtube-video');
       };
 
-      const wishesContainer = document.getElementById('wishesBtnContainer');
-      const wishesBtn = document.getElementById('wishesBtn');
-      const videoOverlay = document.getElementById('video-overlay');
-      
-      if (wishesContainer && wishesBtn && videoOverlay) {
-       // Klick auf den "Wishes"-Button
+      // --- Funktion zum Schließen des Videos ---
+      function closeVideo() {
+        videoOverlay.classList.remove('visible');
+        if (player && player.stopVideo) player.stopVideo();
+      }
+
+      // --- Klick auf "Ready for Birthday wishes" (Startet alles) ---
       wishesBtn.addEventListener('click', () => {
-        const birthdayMusic = document.getElementById('birthday-music');
+        // 1. Musik ausblenden (falls sie läuft)
         if (birthdayMusic && !birthdayMusic.paused) {
           let currentVolume = birthdayMusic.volume;
           const fadeOutInterval = setInterval(() => {
-            currentVolume -= 0.2;
-            if (currentVolume < 0) {
-              currentVolume = 0;
-            }
+            currentVolume -= 0.1; // Etwas schnelleres Ausblenden
+            if (currentVolume < 0) currentVolume = 0;
             birthdayMusic.volume = currentVolume;
-
             if (birthdayMusic.volume <= 0) {
               clearInterval(fadeOutInterval);
               birthdayMusic.pause();
               birthdayMusic.currentTime = 0;
             }
-          }, 60); // Reduziert die Lautstärke alle 100ms
+          }, 60);
         }
-        // ======================================================
 
+        // 2. Video einblenden und "Wishes"-Button verstecken
         videoOverlay.classList.add('visible');
         wishesContainer.style.display = 'none';
         
+        // 3. Video starten (mit kleiner Verzögerung)
         setTimeout(() => {
           if (player && player.playVideo) player.playVideo();
         }, 500); // Warte auf die Fade-in Transition
+
+        // 4. NEU: Nach 5 Sekunden die finalen Buttons anzeigen
+        setTimeout(() => {
+          finalStepContainer.style.display = 'flex'; // 'flex' verwenden, wie im CSS definiert
+        }, 5000); // 5 Sekunden Verzögerung
       });
-        
-        videoOverlay.addEventListener('click', (event) => {
-          if (event.target === videoOverlay) {
-            videoOverlay.classList.remove('visible');
-            if (player && player.stopVideo) player.stopVideo();
-          }
-        });
-      }
+      
+      // --- Klick-Events für die neuen Buttons ---
+
+      // Klick auf "Rewatch Video"
+      rewatchBtn.addEventListener('click', () => {
+        finalStepContainer.style.display = 'none'; // Buttons wieder verstecken
+        videoOverlay.classList.add('visible'); // Video anzeigen
+        setTimeout(() => {
+          if (player && player.playVideo) player.playVideo();
+        }, 500);
+      });
+
+      // Klick auf "Collect your present"
+      collectGiftBtn.addEventListener('click', () => {
+        window.open(giftLocationUrl, '_blank'); // Öffnet Link in neuem Tab
+      });
+
+      // --- Events zum Schließen des Videos ---
+      closeVideoBtn.addEventListener('click', closeVideo);
+      
+      videoOverlay.addEventListener('click', (event) => {
+        // Schließt das Video nur, wenn auf den dunklen Hintergrund geklickt wird
+        if (event.target === videoOverlay) { 
+          closeVideo();
+        }
+      });
     }
 
     init();
