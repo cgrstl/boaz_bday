@@ -448,17 +448,26 @@ x = setInterval(function() {
     ctx.font = opts.charSize + 'px Verdana';
   });
 
-  if (distance > 0) {
+   if (distance > 0) {
     head.style.display = 'initial';
     count.style.display = 'initial';
 
+    // Elemente für die Musiksteuerung holen
     const countdownMusic = document.getElementById('countdown-music');
-    if (countdownMusic) {
-      // Wir versuchen, die Musik zu starten. Falls der Browser es blockiert,
-      // wartet der Code auf eine beliebige Interaktion des Nutzers (Klick).
+    const playMusicBtn = document.getElementById('playMusicBtn');
+
+    if (countdownMusic && playMusicBtn) {
+      // Versuchen, die Musik abzuspielen
       countdownMusic.play().catch(error => {
-        console.log("Autoplay wurde blockiert. Musik startet nach Nutzer-Interaktion.");
-        document.body.addEventListener('click', () => countdownMusic.play(), { once: true });
+        // Wenn es fehlschlägt, den Button anzeigen
+        console.log("Autoplay wurde blockiert. Zeige Musik-Button an.");
+        playMusicBtn.style.display = 'inline-block';
+      });
+
+      // Reaktion auf den Klick auf unseren neuen Button
+      playMusicBtn.addEventListener('click', () => {
+        countdownMusic.play();
+        playMusicBtn.style.display = 'none'; // Button nach Klick ausblenden
       });
     }
     
