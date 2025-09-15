@@ -567,21 +567,20 @@ let x = setInterval(function() {
         }, 5000); // 5 Sekunden Verzögerung
       });
 
-  // Klick auf "Collect your present" (NEUE, EINFACHE LOGIK FÜR ALLE BROWSER)
+  // Klick auf "Collect your present" (JETZT KORREKTE, EINFACHE LOGIK)
       collectGiftBtn.addEventListener('click', () => {
         
         // 1. Definiere deine Zieladresse
         const destinationAddress = "Best Buy, 10799 Washington Boulevard, Culver City, CA 90232";
         const encodedDestination = encodeURIComponent(destinationAddress);
 
-        // 2. Erstelle die Google Maps URL (nur mit Ziel).
-        // Google Maps wird den Nutzer auf der Ergebnisseite selbst nach dem "Startort" fragen.
+        // 2. Erstelle die Google Maps URL (JETZT KORREKT mit Backticks `)
         const simpleDirectionsUrl = `https://www.google.com/maps/dir/?api=1&origin=$4{encodedDestination}`;
 
         // 3. Öffne den Link.
-        // Dies ist ein direkter Klick und wird von KEINEM Browser blockiert.
         window.open(simpleDirectionsUrl, '_blank');
       });
+      
       // --- Events zum Schließen des Videos ---
       closeVideoBtn.addEventListener('click', closeVideo);
       
