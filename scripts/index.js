@@ -561,7 +561,7 @@ let x = setInterval(function() {
         }, 5000); // 5 Sekunden Verzögerung
       });
 
-  // Klick auf "Collect your present" (NEUE ROUTEN-LOGIK)
+  // Klick auf "Collect your present" (NEUE LOGIK FÜR SAFARI-KOMPATIBILITÄT)
       collectGiftBtn.addEventListener('click', () => {
         
         // 1. Definiere deine Zieladresse
@@ -569,14 +569,23 @@ let x = setInterval(function() {
         const encodedDestination = encodeURIComponent(destinationAddress);
 
         // 2. Fallback-URL (falls Standort abgelehnt wird)
-        // Zeigt nur den Zielort auf der Karte
-        // *** KORREKTE URL ***
         const fallbackUrl = `https://www.google.com/maps/search/?api=1&query=${encodedDestination}`;
 
-        // 3. Prüfen, ob der Browser Geolocation unterstützt
+        // 3. WICHTIG FÜR SAFARI: Öffne das Fenster SOFORT (synchron).
+        // Safari blockiert window.open, das in einer asynchronen Callback (wie Geolocation) aufgerufen wird.
+        const mapWindow = window.open('', '_blank');
+        if (mapWindow) {
+          mapWindow.document.write('Please wait, calculating directions...'); // Platzhalter-Text
+        } else {
+          // Pop-up wurde sofort blockiert (selten, aber möglich)
+          alert('Please allow pop-ups for this site to see directions.');
+          return;
+        }
+
+        // 4. Prüfen, ob der Browser Geolocation unterstützt
         if ('geolocation' in navigator) {
           
-          // 4. Standort abfragen (Nutzer muss zustimmen)
+          // 5. Standort abfragen (Nutzer muss zustimmen)
           navigator.geolocation.getCurrentPosition(
             
             // SUCCESS: Nutzer hat zugestimmt
@@ -585,23 +594,24 @@ let x = setInterval(function() {
               const lon = position.coords.longitude;
               
               // Baut die vollständige Routen-URL
-              // *** KORREKTE URL ***
               const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${encodedDestination}`;
-              window.open(directionsUrl, '_blank');
+              
+              // 6a. Setze die URL des bereits geöffneten Fensters
+              if (mapWindow) mapWindow.location.href = directionsUrl;
             },
             
             // ERROR: Nutzer hat abgelehnt oder es gab einen Fehler
             (error) => {
               console.warn('Geolocation error:', error.message);
-              // Öffnet die Fallback-URL (zeigt nur das Ziel)
-              window.open(fallbackUrl, '_blank');
+              // 6b. Setze die Fallback-URL im bereits geöffneten Fenster
+              if (mapWindow) mapWindow.location.href = fallbackUrl;
             }
           );
         } else {
           // Geolocation wird vom Browser nicht unterstützt
           console.warn('Geolocation is not supported by this browser.');
-          // Öffnet die Fallback-URL
-          window.open(fallbackUrl, '_blank');
+          // 6c. Setze die Fallback-URL im bereits geöffneten Fenster
+          if (mapWindow) mapWindow.location.href = fallbackUrl;
         }
       });
 
