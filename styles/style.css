@@ -257,3 +257,35 @@ li span {
   transform: translateX(-50%);
   z-index: 20;
 }
+
+/* Button zum Schließen des Videos */
+#closeVideoBtn {
+  position: absolute; /* Legt sich über das Video */
+  top: 20px;
+  right: 30px;
+  background-color: rgba(0, 0, 0, 0.6); /* Dunkler Kasten */
+  color: white; /* Weisse Schrift */
+  border: 1px solid white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 1001; /* Stellt sicher, dass er über dem Iframe ist */
+  transition: background-color 0.2s;
+  font-family: inherit;
+  font-size: 0.9em;
+}
+
+#closeVideoBtn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Container für die finalen Buttons */
+#finalStepContainer {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex; /* Damit die Buttons nebeneinander liegen */
+  gap: 20px; /* Abstand zwischen den Buttons */
+}
