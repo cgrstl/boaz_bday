@@ -448,7 +448,7 @@ x = setInterval(function() {
     ctx.font = opts.charSize + 'px Verdana';
   });
 
-   if (distance > 0) {
+  if (distance > 0) {
     head.style.display = 'initial';
     count.style.display = 'initial';
 
@@ -457,18 +457,15 @@ x = setInterval(function() {
     const playMusicBtn = document.getElementById('playMusicBtn');
 
     if (countdownMusic && playMusicBtn) {
-      // Versuchen, die Musik abzuspielen
-      countdownMusic.play().catch(error => {
-        // Wenn es fehlschlägt, den Button anzeigen
-        console.log("Autoplay wurde blockiert. Zeige Musik-Button an.");
-        playMusicBtn.style.display = 'inline-block';
-      });
+      // WICHTIG: Wir versuchen nicht mehr, die Musik automatisch zu starten.
+      // Stattdessen zeigen wir den Button einfach direkt an.
+      playMusicBtn.style.display = 'inline-block';
 
-      // Reaktion auf den Klick auf unseren neuen Button
+      // Der Event Listener wartet nur noch auf den Klick auf den Button.
       playMusicBtn.addEventListener('click', () => {
         countdownMusic.play();
         playMusicBtn.style.display = 'none'; // Button nach Klick ausblenden
-      });
+      }, { once: true }); // { once: true } ist hier eine gute Absicherung.
     }
     
   } else {
