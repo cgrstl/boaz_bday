@@ -289,9 +289,86 @@ let x = setInterval(function() {
   
         if (this.tick > opts.letterContemplatingWaitTime) {
           this.phase = 'balloon';
+  
+          this.tick = 0;
+          this.spawning = true;
+          this.spawnTime = (opts.balloonSpawnTime * Math.random()) | 0;
+          this.inflating = false;
+          this.inflateTime =
+            (opts.balloonBaseInflateTime +
+              opts.balloonAddedInflateTime * Math.random()) |
+            0;
+          this.size =
+            (opts.balloonBaseSize + opts.balloonAddedSize * Math.random()) | 0;
+  
+          let rad =
+              opts.balloonBaseRadian + opts.balloonAddedRadian * Math.random(),
+            vel = opts.balloonBaseVel + opts.balloonAddedVel * Math.random();
+  
+          this.vx = Math.cos(rad) * vel;
+          this.vy = Math.sin(rad) * vel;
         }
       } else if (this.phase === 'balloon') {
-          this.phase = 'done'; // Vereinfacht, um Endlosschleife zu gewährleisten
+        ctx.strokeStyle = this.lightColor.replace('light', 80);
+  
+        if (this.spawning) {
+          ++this.tick;
+          ctx.fillStyle = this.lightColor.replace('light', 70);
+          ctx.fillText(this.char, this.x + this.dx, this.y + this.dy);
+  
+          if (this.tick >= this.spawnTime) {
+            this.tick = 0;
+            this.spawning = false;
+            this.inflating = true;
+          }
+        } else if (this.inflating) {
+          ++this.tick;
+  
+          let proportion = this.tick / this.inflateTime,
+            x = (this.cx = this.x),
+            y = (this.cy = this.y - this.size * proportion);
+  
+          ctx.fillStyle = this.alphaColor.replace('alp', proportion);
+          ctx.beginPath();
+          generateBalloonPath(x, y, this.size * proportion);
+          ctx.fill();
+  
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x, this.y);
+          ctx.stroke();
+  
+          ctx.fillStyle = this.lightColor.replace('light', 70);
+          ctx.fillText(this.char, this.x + this.dx, this.y + this.dy);
+  
+          if (this.tick >= this.inflateTime) {
+            this.tick = 0;
+            this.inflating = false;
+          }
+        } else {
+          this.cx += this.vx;
+          this.cy += this.vy += opts.upFlow;
+  
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          generateBalloonPath(this.cx, this.cy, this.size);
+          ctx.fill();
+  
+          ctx.beginPath();
+          ctx.moveTo(this.cx, this.cy);
+          ctx.lineTo(this.cx, this.cy + this.size);
+          ctx.stroke();
+  
+          ctx.fillStyle = this.lightColor.replace('light', 70);
+          ctx.fillText(
+            this.char,
+            this.cx + this.dx,
+            this.cy + this.dy + this.size
+          );
+  
+          if (this.cy + this.size < -hh || this.cx < -hw || this.cy > hw)
+            this.phase = 'done';
+        }
       }
     };
     function Shard(x, y, vx, vy, color) {
@@ -315,6 +392,12 @@ let x = setInterval(function() {
         if (this.prevPoints[0][1] > hh) this.alive = false;
     };
     
+    function generateBalloonPath(x, y, size) {
+        ctx.moveTo(x, y);
+        ctx.bezierCurveTo(x - size / 2, y - size / 2, x - size / 4, y - size, x, y - size);
+        ctx.bezierCurveTo(x + size / 4, y - size, x + size / 2, y - size / 2, x, y);
+    }
+
     function anim() {
         window.requestAnimationFrame(anim);
         ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
