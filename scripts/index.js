@@ -465,23 +465,19 @@ x = setInterval(function() {
     head.style.display = 'initial';
     count.style.display = 'initial';
 
-    // PRÜFE DIE FLAGGE: Führe den Code nur aus, wenn er noch nicht ausgeführt wurde.
     if (!musicButtonSetupDone) {
       const countdownMusic = document.getElementById('countdown-music');
       const playMusicBtn = document.getElementById('playMusicBtn');
 
       if (countdownMusic && playMusicBtn) {
-        // Zeige den Button an
         playMusicBtn.style.display = 'inline-block';
 
-        // Warte auf den Klick
         playMusicBtn.addEventListener('click', () => {
           countdownMusic.play();
-          playMusicBtn.style.display = 'none'; // Button ausblenden
+          playMusicBtn.style.display = 'none';
         }, { once: true });
       }
       
-      // SETZE DIE FLAGGE: Markiere den Setup-Code als "erledigt".
       musicButtonSetupDone = true;
     }
 
@@ -494,7 +490,7 @@ x = setInterval(function() {
     let box = merrywrap.getElementsByClassName('giftbox')[0];
     let step = 1;
     let stepMinutes = [2000, 2000, 1000, 1000];
-    let animationCycles = 0; // Zählt die Animations-Durchläufe
+    let animationCycles = 0;
 
     function init() {
       box.addEventListener('click', openBox, false);
@@ -503,13 +499,11 @@ x = setInterval(function() {
         const countdownMusic = document.getElementById('countdown-music');
         const birthdayMusic = document.getElementById('birthday-music');
 
-        // Stoppe die Countdown-Musik
         if (countdownMusic) {
           countdownMusic.pause();
-          countdownMusic.currentTime = 0; // Zurückspulen
+          countdownMusic.currentTime = 0;
         }
 
-        // Starte die Geburtstags-Musik
         if (birthdayMusic) {
           birthdayMusic.play();
         }
@@ -539,7 +533,6 @@ x = setInterval(function() {
       canvasC.style.display = 'initial';
       setTimeout(anim, 1500);
 
-      // Definiere den YouTube Player, wenn die API bereit ist
       window.onYouTubeIframeAPIReady = function() {
         player = new YT.Player('youtube-video');
       };
@@ -549,17 +542,15 @@ x = setInterval(function() {
       const videoOverlay = document.getElementById('video-overlay');
       
       if (wishesContainer && wishesBtn && videoOverlay) {
-        // Klick auf den "Wishes"-Button
         wishesBtn.addEventListener('click', () => {
           videoOverlay.classList.add('visible');
           wishesContainer.style.display = 'none';
           
           setTimeout(() => {
             if (player && player.playVideo) player.playVideo();
-          }, 500); // Warte auf die Fade-in Transition
+          }, 500);
         });
         
-        // Video-Overlay schließen
         videoOverlay.addEventListener('click', (event) => {
           if (event.target === videoOverlay) {
             videoOverlay.classList.remove('visible');
