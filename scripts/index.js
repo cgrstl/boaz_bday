@@ -4,6 +4,11 @@ const giftbox = document.getElementById('merrywrap');
 const canvasC = document.getElementById('c');
 let player; // Variable für den YouTube Player
 
+// --- YouTube-Player ---
+      window.onYouTubeIframeAPIReady = function() {
+        player = new YT.Player('youtube-video');
+      };
+
 let musicButtonSetupDone = false; // "Flagge" für den Musik-Button
 
 const config = {
@@ -487,11 +492,6 @@ let x = setInterval(function() {
       // Platzhalter-URL für das Geschenk. Ändere dies auf deinen Link.
       const giftLocationUrl = "https://www.google.com/maps/place/Ein+Ort+deiner+Wahl"; 
 
-      // --- YouTube-Player ---
-      window.onYouTubeIframeAPIReady = function() {
-        player = new YT.Player('youtube-video');
-      };
-
       // --- Funktion zum Schließen des Videos ---
       function closeVideo() {
         videoOverlay.classList.remove('visible');
@@ -532,13 +532,25 @@ let x = setInterval(function() {
       
       // --- Klick-Events für die neuen Buttons ---
 
-      // Klick auf "Rewatch Video"
+     // Klick auf "Rewatch Video" (AKTUALISIERTE LOGIK)
       rewatchBtn.addEventListener('click', () => {
-        finalStepContainer.style.display = 'none'; // Buttons wieder verstecken
-        videoOverlay.classList.add('visible'); // Video anzeigen
+        // 1. Buttons (Rewatch/Collect) sofort verstecken
+        finalStepContainer.style.display = 'none';
+        
+        // 2. Video anzeigen (der closeVideoBtn ist darin und wird mitausgelöst)
+        videoOverlay.classList.add('visible'); 
+        
+        // 3. Video starten
         setTimeout(() => {
-          if (player && player.playVideo) player.playVideo();
+          if (player && typeof player.playVideo === 'function') { // Sicherer Check
+            player.playVideo();
+          }
         }, 500);
+
+        // 4. NEU: Die Buttons nach 5 Sek. wieder anzeigen (die "konstante Logik")
+        setTimeout(() => {
+          finalStepContainer.style.display = 'flex'; 
+        }, 5000); // 5 Sekunden Verzögerung
       });
 
       // Klick auf "Collect your present"
