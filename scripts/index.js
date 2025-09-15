@@ -506,10 +506,17 @@ let x = setInterval(function() {
 
       const birthdayMusic = document.getElementById('birthday-music');
 
-         // --- Funktion zum Schließen des Videos ---
+            // --- Funktion zum Schließen des Videos ---
       function closeVideo() {
         videoOverlay.classList.remove('visible');
-        if (player && player.stopVideo) player.stopVideo();
+        // Sicherer Aufruf
+        if (player && typeof player.stopVideo === "function") {
+          player.stopVideo();
+        }
+        if (finalStepContainer) {
+          finalStepContainer.style.display = 'flex';
+        }
+      }
 
         // NEU: Zeigt die finalen Buttons sofort an
         if (finalStepContainer) {
@@ -538,9 +545,11 @@ let x = setInterval(function() {
         videoOverlay.classList.add('visible');
         wishesContainer.style.display = 'none';
         
-        // 3. Video starten (mit kleiner Verzögerung)
+            // 3. Video starten (mit kleiner Verzögerung und sicherem Aufruf)
         setTimeout(() => {
-          if (player && player.playVideo) player.playVideo();
+          if (player && typeof player.playVideo === "function") {
+            player.playVideo();
+          }
         }, 500); // Warte auf die Fade-in Transition
 
         // 4. NEU: Nach 5 Sekunden die finalen Buttons anzeigen
@@ -572,27 +581,31 @@ let x = setInterval(function() {
         }, 5000); // 5 Sekunden Verzögerung
       });
 
-  // Klick auf "Collect your present" (JETZT KORREKTE, EINFACHE LOGIK)
+  // Klick auf "Collect your present" (MOBIL-OPTIMIERTE LOGIK / GLEICHER TAB)
       collectGiftBtn.addEventListener('click', () => {
         
-        // 1. Definiere deine Zieladresse
         const destinationAddress = "Best Buy, 10799 Washington Boulevard, Culver City, CA 90232";
         const encodedDestination = encodeURIComponent(destinationAddress);
 
-        // 2. Erstelle die Google Maps URL (JETZT KORREKT mit Backticks `)
-        const simpleDirectionsUrl = `https://www.google.com/maps/dir/?api=1&origin=$4{encodedDestination}`;
+        // App-Link (versucht, die App auf dem Handy zu öffnen)
+        const appUrl = `maps://?daddr=${encodedDestination}`;
 
-        // 3. Öffne den Link.
-        window.open(simpleDirectionsUrl, '_blank');
-      });
-      
-      // --- Events zum Schließen des Videos ---
-      closeVideoBtn.addEventListener('click', closeVideo);
-      
-      videoOverlay.addEventListener('click', (event) => {
-        // Schließt das Video nur, wenn auf den dunklen Hintergrund geklickt wird
-        if (event.target === videoOverlay) { 
-          closeVideo();
+        // Web-Fallback-Link (falls die App nicht da ist oder auf Desktop)
+        const webUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedDestination}`;
+
+        // Versucht, die App zu öffnen, mit Fallback auf die Web-URL
+        if (/Mobi|Android/i.test(navigator.userAgent)) {
+          // Auf Mobilgeräten
+          window.location.href = appUrl;
+          
+          // Fallback, falls die App nicht innerhalb von 500ms reagiert
+          setTimeout(() => { 
+            window.location.href = webUrl; 
+          }, 500); 
+
+        } else {
+          // Auf Desktop-Geräten
+          window.location.href = webUrl;
         }
       });
     }
