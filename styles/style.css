@@ -258,11 +258,12 @@ li span {
   z-index: 20;
 }
 
-/* Button zum Schließen des Videos */
 #closeVideoBtn {
   position: absolute; /* Legt sich über das Video */
   top: 20px;
-  right: 30px;
+  left: 50%; /* NEU */
+  transform: translateX(-50%); /* NEU */
+  /* right: 30px; ENTFERNT */
   background-color: rgba(0, 0, 0, 0.6); /* Dunkler Kasten */
   color: white; /* Weisse Schrift */
   border: 1px solid white;
@@ -279,13 +280,13 @@ li span {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Container für die finalen Buttons */
 #finalStepContainer {
   position: absolute;
   bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;
-  display: flex; /* Damit die Buttons nebeneinander liegen */
+  display: flex;
+  flex-direction: column; /* NEU: Stapelt die Buttons */
   gap: 20px; /* Abstand zwischen den Buttons */
 }
