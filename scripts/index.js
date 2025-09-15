@@ -6,7 +6,7 @@ const canvasC = document.getElementById('c');
 let musicButtonSetupDone = false; // Unsere neue "Flagge"
 
 const config = {
-  birthdate: 'Sep 16, 2025',
+  birthdate: 'Sep 15, 2025 14:00:00', 
   name: 'Boaz'
 };
 
@@ -28,7 +28,7 @@ const second = 1000,
   hour = minute * 60,
   day = hour * 24;
 
-let countDown = new Date(`${config.birthdate} 00:00:00`).getTime();
+let countDown = new Date(config.birthdate).getTime();
 x = setInterval(function() {
   let now = new Date().getTime(),
     distance = countDown - now;
