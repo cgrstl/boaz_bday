@@ -3,6 +3,8 @@ const head = document.getElementById('head');
 const giftbox = document.getElementById('merrywrap');
 const canvasC = document.getElementById('c');
 
+let musicButtonSetupDone = false; // Unsere neue "Flagge"
+
 const config = {
   birthdate: 'Sep 16, 2025',
   name: 'Boaz'
