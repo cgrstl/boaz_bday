@@ -450,26 +450,30 @@ x = setInterval(function() {
     ctx.font = opts.charSize + 'px Verdana';
   });
 
-  if (distance > 0) {
+ if (distance > 0) {
     head.style.display = 'initial';
     count.style.display = 'initial';
 
-    // Elemente für die Musiksteuerung holen
-    const countdownMusic = document.getElementById('countdown-music');
-    const playMusicBtn = document.getElementById('playMusicBtn');
+    // PRÜFE DIE FLAGGE: Führe den Code nur aus, wenn er noch nicht ausgeführt wurde.
+    if (!musicButtonSetupDone) {
+      const countdownMusic = document.getElementById('countdown-music');
+      const playMusicBtn = document.getElementById('playMusicBtn');
 
-    if (countdownMusic && playMusicBtn) {
-      // WICHTIG: Wir versuchen nicht mehr, die Musik automatisch zu starten.
-      // Stattdessen zeigen wir den Button einfach direkt an.
-      playMusicBtn.style.display = 'inline-block';
+      if (countdownMusic && playMusicBtn) {
+        // Zeige den Button an
+        playMusicBtn.style.display = 'inline-block';
 
-      // Der Event Listener wartet nur noch auf den Klick auf den Button.
-      playMusicBtn.addEventListener('click', () => {
-        countdownMusic.play();
-        playMusicBtn.style.display = 'none'; // Button nach Klick ausblenden
-      }, { once: true }); // { once: true } ist hier eine gute Absicherung.
+        // Warte auf den Klick
+        playMusicBtn.addEventListener('click', () => {
+          countdownMusic.play();
+          playMusicBtn.style.display = 'none'; // Button ausblenden
+        }, { once: true });
+      }
+      
+      // SETZE DIE FLAGGE: Markiere den Setup-Code als "erledigt".
+      musicButtonSetupDone = true;
     }
-    
+
   } else {
     head.style.display = 'none';
     count.style.display = 'none';
