@@ -422,8 +422,12 @@ let x = setInterval(function() {
     
     for (let i = 0; i < opts.strings.length; ++i) {
         for (let j = 0; j < opts.strings[i].length; ++j) {
-            letters.push(new Letter(opts.strings[i][j],
-                j * opts.charSpacing + opts.charSpacing / 2 - (opts.strings[i].length * opts.charSize) / 2,
+            letters.push(
+  new Letter(
+    opts.strings[i][j],
+    j * opts.charSpacing +
+      opts.charSpacing / 2 -
+      (opts.strings[i].length * opts.charSpacing) / 2,
                 i * opts.lineHeight + opts.lineHeight / 2 - (opts.strings.length * opts.lineHeight) / 2));
         }
     }
@@ -479,14 +483,11 @@ let x = setInterval(function() {
       if (wishesContainer && wishesBtn && videoOverlay) {
        // Klick auf den "Wishes"-Button
       wishesBtn.addEventListener('click', () => {
-        // ======================================================
-        // NEU: Fade-out für die Geburtstagsmusik
-        // ======================================================
         const birthdayMusic = document.getElementById('birthday-music');
         if (birthdayMusic && !birthdayMusic.paused) {
           let currentVolume = birthdayMusic.volume;
           const fadeOutInterval = setInterval(() => {
-            currentVolume -= 0.1;
+            currentVolume -= 0.2;
             if (currentVolume < 0) {
               currentVolume = 0;
             }
@@ -497,7 +498,7 @@ let x = setInterval(function() {
               birthdayMusic.pause();
               birthdayMusic.currentTime = 0;
             }
-          }, 300); // Reduziert die Lautstärke alle 100ms
+          }, 60); // Reduziert die Lautstärke alle 100ms
         }
         // ======================================================
 
