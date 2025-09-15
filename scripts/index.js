@@ -506,10 +506,15 @@ let x = setInterval(function() {
 
       const birthdayMusic = document.getElementById('birthday-music');
 
-      // --- Funktion zum Schließen des Videos ---
+         // --- Funktion zum Schließen des Videos ---
       function closeVideo() {
         videoOverlay.classList.remove('visible');
         if (player && player.stopVideo) player.stopVideo();
+
+        // NEU: Zeigt die finalen Buttons sofort an
+        if (finalStepContainer) {
+          finalStepContainer.style.display = 'flex';
+        }
       }
 
       // --- Klick auf "Ready for Birthday wishes" (Startet alles) ---
