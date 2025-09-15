@@ -1,3 +1,9 @@
+window.addEventListener('pageshow', function(event) {
+  if (event.persisted) {
+    window.location.reload();
+  }
+});
+
 const count = document.getElementById('count');
 const head = document.getElementById('head');
 const giftbox = document.getElementById('merrywrap');
@@ -12,7 +18,7 @@ let player; // Variable für den YouTube Player
 let musicButtonSetupDone = false; // "Flagge" für den Musik-Button
 
 const config = {
-  birthdate: 'Sep 15, 2025 21:38:00', // Dein flexibles Datum mit Uhrzeit
+  birthdate: 'Sep 15, 2025 21:50:00', // Dein flexibles Datum mit Uhrzeit
   name: 'BOAZ'
 };
 
@@ -561,56 +567,20 @@ let x = setInterval(function() {
         }, 5000); // 5 Sekunden Verzögerung
       });
 
-  // Klick auf "Collect your present" (KORRIGIERTE URLS FÜR ALLE BROWSER)
+  // Klick auf "Collect your present" (NEUE, EINFACHE LOGIK FÜR ALLE BROWSER)
       collectGiftBtn.addEventListener('click', () => {
         
         // 1. Definiere deine Zieladresse
         const destinationAddress = "Best Buy, 10799 Washington Boulevard, Culver City, CA 90232";
         const encodedDestination = encodeURIComponent(destinationAddress);
 
-        // 2. Fallback-URL (jetzt mit Backticks ` und ${...} )
-        const fallbackUrl = `https://www.google.com/maps/search/?api=1&query=${encodedDestination}`;
+        // 2. Erstelle die Google Maps URL (nur mit Ziel).
+        // Google Maps wird den Nutzer auf der Ergebnisseite selbst nach dem "Startort" fragen.
+        const simpleDirectionsUrl = `https://www.google.com/maps/dir/?api=1&origin=$4{encodedDestination}`;
 
-        // 3. WICHTIG FÜR SAFARI: Öffne das Fenster SOFORT
-        const mapWindow = window.open('', '_blank');
-        if (mapWindow) {
-          mapWindow.document.write('Please wait, calculating directions...');
-        } else {
-          alert('Please allow pop-ups for this site to see directions.');
-          return;
-        }
-
-        // 4. Prüfen, ob der Browser Geolocation unterstützt
-        if ('geolocation' in navigator) {
-          
-          // 5. Standort abfragen
-          navigator.geolocation.getCurrentPosition(
-            
-            // SUCCESS: Nutzer hat zugestimmt
-            (position) => {
-              const lat = position.coords.latitude;
-              const lon = position.coords.longitude;
-              
-              // Baut die vollständige Routen-URL (jetzt mit Backticks ` und ${...} )
-              const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${encodedDestination}`;
-              
-              // 6a. Setze die URL
-              if (mapWindow) mapWindow.location.href = directionsUrl;
-            },
-            
-            // ERROR: Nutzer hat abgelehnt oder es gab einen Fehler
-            (error) => {
-              console.warn('Geolocation error:', error.message);
-              // 6b. Setze die Fallback-URL
-              if (mapWindow) mapWindow.location.href = fallbackUrl;
-            }
-          );
-        } else {
-          // Geolocation wird vom Browser nicht unterstützt
-          console.warn('Geolocation is not supported by this browser.');
-          // 6c. Setze die Fallback-URL
-          if (mapWindow) mapWindow.location.href = fallbackUrl;
-        }
+        // 3. Öffne den Link.
+        // Dies ist ein direkter Klick und wird von KEINEM Browser blockiert.
+        window.open(simpleDirectionsUrl, '_blank');
       });
       // --- Events zum Schließen des Videos ---
       closeVideoBtn.addEventListener('click', closeVideo);
