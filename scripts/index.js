@@ -12,7 +12,7 @@ let player; // Variable für den YouTube Player
 let musicButtonSetupDone = false; // "Flagge" für den Musik-Button
 
 const config = {
-  birthdate: 'Sep 15, 2025 14:00:00', // Dein flexibles Datum mit Uhrzeit
+  birthdate: 'Sep 15, 2025 19:40:00', // Dein flexibles Datum mit Uhrzeit
   name: 'BOAZ'
 };
 
@@ -488,9 +488,6 @@ let x = setInterval(function() {
       const collectGiftBtn = document.getElementById('collectGiftBtn'); // Neu
 
       const birthdayMusic = document.getElementById('birthday-music');
-      
-      // Platzhalter-URL für das Geschenk. Ändere dies auf deinen Link.
-      const giftLocationUrl = "https://www.google.com/maps/place/Ein+Ort+deiner+Wahl"; 
 
       // --- Funktion zum Schließen des Videos ---
       function closeVideo() {
@@ -553,9 +550,46 @@ let x = setInterval(function() {
         }, 5000); // 5 Sekunden Verzögerung
       });
 
-      // Klick auf "Collect your present"
+     // Klick auf "Collect your present" (NEUE ROUTEN-LOGIK)
       collectGiftBtn.addEventListener('click', () => {
-        window.open(giftLocationUrl, '_blank'); // Öffnet Link in neuem Tab
+        
+        // 1. Definiere deine Zieladresse
+        const destinationAddress = "Best Buy, 10799 Washington Boulevard, Culver City, CA 90232";
+        const encodedDestination = encodeURIComponent(destinationAddress);
+
+        // 2. Fallback-URL (falls Standort abgelehnt wird)
+        // Zeigt nur den Zielort auf der Karte
+        const fallbackUrl = `https://www.google.com/maps/search/?api=1&query=${encodedDestination}`;
+
+        // 3. Prüfen, ob der Browser Geolocation unterstützt
+        if ('geolocation' in navigator) {
+          
+          // 4. Standort abfragen (Nutzer muss zustimmen)
+          navigator.geolocation.getCurrentPosition(
+            
+            // SUCCESS: Nutzer hat zugestimmt
+            (position) => {
+              const lat = position.coords.latitude;
+              const lon = position.coords.longitude;
+              
+              // Baut die vollständige Routen-URL
+              const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${encodedDestination}`;
+              window.open(directionsUrl, '_blank');
+            },
+            
+            // ERROR: Nutzer hat abgelehnt oder es gab einen Fehler
+            (error) => {
+              console.warn('Geolocation error:', error.message);
+              // Öffnet die Fallback-URL (zeigt nur das Ziel)
+              window.open(fallbackUrl, '_blank');
+            }
+          );
+        } else {
+          // Geolocation wird vom Browser nicht unterstützt
+          console.warn('Geolocation is not supported by this browser.');
+          // Öffnet die Fallback-URL
+          window.open(fallbackUrl, '_blank');
+        }
       });
 
       // --- Events zum Schließen des Videos ---
