@@ -2,8 +2,9 @@ const count = document.getElementById('count');
 const head = document.getElementById('head');
 const giftbox = document.getElementById('merrywrap');
 const canvasC = document.getElementById('c');
+let player; // Variable für den YouTube Player
 
-let musicButtonSetupDone = false; // Unsere neue "Flagge"
+let musicButtonSetupDone = false; // Unsere "Flagge"
 
 const config = {
   birthdate: 'Sep 15, 2025 14:00:00', 
@@ -421,7 +422,17 @@ x = setInterval(function() {
 
     ctx.translate(-hw, -hh);
 
-    if (done) for (let l = 0; l < letters.length; ++l) letters[l].reset();
+    if (done) {
+      animationCycles++; // Zähler erhöhen
+      if (animationCycles === 1) { // Nach dem ERSTEN Durchlauf...
+        const wishesContainer = document.getElementById('wishesBtnContainer');
+        if (wishesContainer) {
+          wishesContainer.style.display = 'block'; // ...zeige den Button an.
+        }
+      }
+      
+      for (let l = 0; l < letters.length; ++l) letters[l].reset();
+    }
   }
 
   for (let i = 0; i < opts.strings.length; ++i) {
@@ -483,6 +494,7 @@ x = setInterval(function() {
     let box = merrywrap.getElementsByClassName('giftbox')[0];
     let step = 1;
     let stepMinutes = [2000, 2000, 1000, 1000];
+    let animationCycles = 0; // Zählt die Animations-Durchläufe
 
     function init() {
       box.addEventListener('click', openBox, false);
@@ -521,19 +533,42 @@ x = setInterval(function() {
       }
       setTimeout(openBox, stepMinutes[step - 1]);
       step++;
-      //   setTimeout(anim, 1900);
     }
 
     function showfireworks() {
       canvasC.style.display = 'initial';
       setTimeout(anim, 1500);
+
+      // Definiere den YouTube Player, wenn die API bereit ist
+      window.onYouTubeIframeAPIReady = function() {
+        player = new YT.Player('youtube-video');
+      };
+
+      const wishesContainer = document.getElementById('wishesBtnContainer');
+      const wishesBtn = document.getElementById('wishesBtn');
+      const videoOverlay = document.getElementById('video-overlay');
+      
+      if (wishesContainer && wishesBtn && videoOverlay) {
+        // Klick auf den "Wishes"-Button
+        wishesBtn.addEventListener('click', () => {
+          videoOverlay.classList.add('visible');
+          wishesContainer.style.display = 'none';
+          
+          setTimeout(() => {
+            if (player && player.playVideo) player.playVideo();
+          }, 500); // Warte auf die Fade-in Transition
+        });
+        
+        // Video-Overlay schließen
+        videoOverlay.addEventListener('click', (event) => {
+          if (event.target === videoOverlay) {
+            videoOverlay.classList.remove('visible');
+            if (player && player.stopVideo) player.stopVideo();
+          }
+        });
+      }
     }
 
     init();
   }
-
-  // if (distance < 0) {
-  //     clearInterval(x);
-  //     console.log("happy birthday");
-  // }
 }, second);
