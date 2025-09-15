@@ -1,9 +1,3 @@
-window.addEventListener('pageshow', function(event) {
-  if (event.persisted) {
-    window.location.reload();
-  }
-});
-
 const count = document.getElementById('count');
 const head = document.getElementById('head');
 const giftbox = document.getElementById('merrywrap');
@@ -18,7 +12,7 @@ let player; // Variable für den YouTube Player
 let musicButtonSetupDone = false; // "Flagge" für den Musik-Button
 
 const config = {
-  birthdate: 'Sep 15, 2025 21:16:00', // Dein flexibles Datum mit Uhrzeit
+  birthdate: 'Sep 15, 2025 21:20:00', // Dein flexibles Datum mit Uhrzeit
   name: 'BOAZ'
 };
 
