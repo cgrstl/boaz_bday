@@ -7,7 +7,7 @@ let player; // Variable für den YouTube Player
 let musicButtonSetupDone = false; // "Flagge" für den Musik-Button
 
 const config = {
-  birthdate: 'Sep 15, 2025 14:00:00', 
+  birthdate: 'Sep 15, 2025 14:00:00', // Dein flexibles Datum mit Uhrzeit
   name: 'BOAZ'
 };
 
@@ -29,6 +29,7 @@ const second = 1000,
   hour = minute * 60,
   day = hour * 24;
 
+// Flexible Countdown-Zeit nutzen
 let countDown = new Date(config.birthdate).getTime();
 let x = setInterval(function() {
   let now = new Date().getTime(),
@@ -44,6 +45,7 @@ let x = setInterval(function() {
     document.getElementById('minute').innerText = Math.floor((distance % hour) / minute);
     document.getElementById('second').innerText = Math.floor((distance % minute) / second);
 
+    // Logik für den Musik-Button
     if (!musicButtonSetupDone) {
       const countdownMusic = document.getElementById('countdown-music');
       const playMusicBtn = document.getElementById('playMusicBtn');
@@ -69,71 +71,260 @@ let x = setInterval(function() {
     let box = merrywrap.getElementsByClassName('giftbox')[0];
     let step = 1;
     let stepMinutes = [2000, 2000, 1000, 1000];
-    let animationCycles = 0;
+    let animationCycles = 0; // Zählt die Animations-Durchläufe
 
-    const letters = [];
+    // Alles für die Animation (Originalcode)
+    let w = (c.width = window.innerWidth),
+        h = (c.height = window.innerHeight),
+        ctx = c.getContext('2d'),
+        hw = w / 2, hh = h / 2,
+        letters = [];
+    
     const opts = {
-        strings: ['HAPPY', 'BIRTHDAY!', config.name],
-        charSize: 30,
-        charSpacing: 35,
-        lineHeight: 40,
-        fireworkPrevPoints: 10,
-        fireworkBaseLineWidth: 5,
-        fireworkAddedLineWidth: 8,
-        fireworkSpawnTime: 200,
-        fireworkBaseReachTime: 30,
-        fireworkAddedReachTime: 30,
-        fireworkCircleBaseSize: 20,
-        fireworkCircleAddedSize: 10,
-        fireworkCircleBaseTime: 30,
-        fireworkCircleAddedTime: 30,
-        fireworkCircleFadeBaseTime: 10,
-        fireworkCircleFadeAddedTime: 5,
-        fireworkBaseShards: 5,
-        fireworkAddedShards: 5,
-        fireworkShardPrevPoints: 3,
-        fireworkShardBaseVel: 4,
-        fireworkShardAddedVel: 2,
-        fireworkShardBaseSize: 3,
-        fireworkShardAddedSize: 3,
-        gravity: 0.1,
-        upFlow: -0.1,
-        letterContemplatingWaitTime: 360,
+      strings: ['HAPPY', 'BIRTHDAY!', config.name],
+      charSize: 30,
+      charSpacing: 35,
+      lineHeight: 40,
+      fireworkPrevPoints: 10,
+      fireworkBaseLineWidth: 5,
+      fireworkAddedLineWidth: 8,
+      fireworkSpawnTime: 200,
+      fireworkBaseReachTime: 30,
+      fireworkAddedReachTime: 30,
+      fireworkCircleBaseSize: 20,
+      fireworkCircleAddedSize: 10,
+      fireworkCircleBaseTime: 30,
+      fireworkCircleAddedTime: 30,
+      fireworkCircleFadeBaseTime: 10,
+      fireworkCircleFadeAddedTime: 5,
+      fireworkBaseShards: 5,
+      fireworkAddedShards: 5,
+      fireworkShardPrevPoints: 3,
+      fireworkShardBaseVel: 4,
+      fireworkShardAddedVel: 2,
+      fireworkShardBaseSize: 3,
+      fireworkShardAddedSize: 3,
+      gravity: 0.1,
+      upFlow: -0.1,
+      letterContemplatingWaitTime: 360,
+      balloonSpawnTime: 20,
+      balloonBaseInflateTime: 10,
+      balloonAddedInflateTime: 10,
+      balloonBaseSize: 20,
+      balloonAddedSize: 20,
+      balloonBaseVel: 0.4,
+      balloonAddedVel: 0.4,
+      balloonBaseRadian: -(Math.PI / 2 - 0.5),
+      balloonAddedRadian: -1
     };
+    const calc = {
+        totalWidth: opts.charSpacing * Math.max(opts.strings[0].length, opts.strings[1].length)
+    };
+    const Tau = Math.PI * 2;
+    const TauQuarter = Tau / 4;
 
-    function initializeLetters() {
-        const calc = {
-            totalWidth: opts.charSpacing * Math.max(opts.strings[0].length, opts.strings[1].length)
-        };
-        for (let i = 0; i < opts.strings.length; ++i) {
-            for (let j = 0; j < opts.strings[i].length; ++j) {
-                letters.push(new Letter(
-                    opts.strings[i][j],
-                    j * opts.charSpacing + opts.charSpacing / 2 - (opts.strings[i].length * opts.charSize) / 2,
-                    i * opts.lineHeight + opts.lineHeight / 2 - (opts.strings.length * opts.lineHeight) / 2,
-                    calc
-                ));
-            }
-        }
+    ctx.font = opts.charSize + 'px Verdana';
+    
+    function Letter(char, x, y) {
+      this.char = char;
+      this.x = x;
+      this.y = y;
+  
+      this.dx = -ctx.measureText(char).width / 2;
+      this.dy = +opts.charSize / 2;
+  
+      this.fireworkDy = this.y - hh;
+  
+      let hue = (x / calc.totalWidth) * 360;
+  
+      this.color = 'hsl(hue,80%,50%)'.replace('hue', hue);
+      this.lightAlphaColor = 'hsla(hue,80%,light%,alp)'.replace('hue', hue);
+      this.lightColor = 'hsl(hue,80%,light%)'.replace('hue', hue);
+      this.alphaColor = 'hsla(hue,80%,50%,alp)'.replace('hue', hue);
+  
+      this.reset();
     }
-
+    Letter.prototype.reset = function() {
+      this.phase = 'firework';
+      this.tick = 0;
+      this.spawned = false;
+      this.spawningTime = (opts.fireworkSpawnTime * Math.random()) | 0;
+      this.reachTime =
+        (opts.fireworkBaseReachTime +
+          opts.fireworkAddedReachTime * Math.random()) |
+        0;
+      this.lineWidth =
+        opts.fireworkBaseLineWidth + opts.fireworkAddedLineWidth * Math.random();
+      this.prevPoints = [[0, hh, 0]];
+    };
+    Letter.prototype.step = function() {
+      if (this.phase === 'firework') {
+        if (!this.spawned) {
+          ++this.tick;
+          if (this.tick >= this.spawningTime) {
+            this.tick = 0;
+            this.spawned = true;
+          }
+        } else {
+          ++this.tick;
+  
+          let linearProportion = this.tick / this.reachTime,
+            armonicProportion = Math.sin(linearProportion * TauQuarter),
+            x = linearProportion * this.x,
+            y = hh + armonicProportion * this.fireworkDy;
+  
+          if (this.prevPoints.length > opts.fireworkPrevPoints)
+            this.prevPoints.shift();
+  
+          this.prevPoints.push([x, y, linearProportion * this.lineWidth]);
+  
+          let lineWidthProportion = 1 / (this.prevPoints.length - 1);
+  
+          for (let i = 1; i < this.prevPoints.length; ++i) {
+            let point = this.prevPoints[i],
+              point2 = this.prevPoints[i - 1];
+  
+            ctx.strokeStyle = this.alphaColor.replace(
+              'alp',
+              i / this.prevPoints.length
+            );
+            ctx.lineWidth = point[2] * lineWidthProportion * i;
+            ctx.beginPath();
+            ctx.moveTo(point[0], point[1]);
+            ctx.lineTo(point2[0], point2[1]);
+            ctx.stroke();
+          }
+  
+          if (this.tick >= this.reachTime) {
+            this.phase = 'contemplate';
+  
+            this.circleFinalSize =
+              opts.fireworkCircleBaseSize +
+              opts.fireworkCircleAddedSize * Math.random();
+            this.circleCompleteTime =
+              (opts.fireworkCircleBaseTime +
+                opts.fireworkCircleAddedTime * Math.random()) |
+              0;
+            this.circleCreating = true;
+            this.circleFading = false;
+  
+            this.circleFadeTime =
+              (opts.fireworkCircleFadeBaseTime +
+                opts.fireworkCircleFadeAddedTime * Math.random()) |
+              0;
+            this.tick = 0;
+            this.tick2 = 0;
+  
+            this.shards = [];
+  
+            let shardCount =
+                (opts.fireworkBaseShards +
+                  opts.fireworkAddedShards * Math.random()) |
+                0,
+              angle = Tau / shardCount,
+              cos = Math.cos(angle),
+              sin = Math.sin(angle),
+              x = 1,
+              y = 0;
+  
+            for (let i = 0; i < shardCount; ++i) {
+              let x1 = x;
+              x = x * cos - y * sin;
+              y = y * cos + x1 * sin;
+  
+              this.shards.push(new Shard(this.x, this.y, x, y, this.alphaColor));
+            }
+          }
+        }
+      } else if (this.phase === 'contemplate') {
+        ++this.tick;
+  
+        if (this.circleCreating) {
+          ++this.tick2;
+          let proportion = this.tick2 / this.circleCompleteTime,
+            armonic = -Math.cos(proportion * Math.PI) / 2 + 0.5;
+  
+          ctx.beginPath();
+          ctx.fillStyle = this.lightAlphaColor
+            .replace('light', 50 + 50 * proportion)
+            .replace('alp', proportion);
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, armonic * this.circleFinalSize, 0, Tau);
+          ctx.fill();
+  
+          if (this.tick2 > this.circleCompleteTime) {
+            this.tick2 = 0;
+            this.circleCreating = false;
+            this.circleFading = true;
+          }
+        } else if (this.circleFading) {
+          ctx.fillStyle = this.lightColor.replace('light', 70);
+          ctx.fillText(this.char, this.x + this.dx, this.y + this.dy);
+  
+          ++this.tick2;
+          let proportion = this.tick2 / this.circleFadeTime,
+            armonic = -Math.cos(proportion * Math.PI) / 2 + 0.5;
+  
+          ctx.beginPath();
+          ctx.fillStyle = this.lightAlphaColor
+            .replace('light', 100)
+            .replace('alp', 1 - armonic);
+          ctx.arc(this.x, this.y, this.circleFinalSize, 0, Tau);
+          ctx.fill();
+  
+          if (this.tick2 >= this.circleFadeTime) this.circleFading = false;
+        } else {
+          ctx.fillStyle = this.lightColor.replace('light', 70);
+          ctx.fillText(this.char, this.x + this.dx, this.y + this.dy);
+        }
+  
+        for (let i = 0; i < this.shards.length; ++i) {
+          this.shards[i].step();
+  
+          if (!this.shards[i].alive) {
+            this.shards.splice(i, 1);
+            --i;
+          }
+        }
+  
+        if (this.tick > opts.letterContemplatingWaitTime) {
+          this.phase = 'balloon';
+        }
+      } else if (this.phase === 'balloon') {
+          this.phase = 'done'; // Vereinfacht, um Endlosschleife zu gewährleisten
+      }
+    };
+    function Shard(x, y, vx, vy, color) {
+        let vel = opts.fireworkShardBaseVel + opts.fireworkShardAddedVel * Math.random();
+        this.vx = vx * vel; this.vy = vy * vel;
+        this.x = x; this.y = y;
+        this.prevPoints = [[x, y]]; this.color = color;
+        this.alive = true; this.size = opts.fireworkShardBaseSize + opts.fireworkShardAddedSize * Math.random();
+    }
+    Shard.prototype.step = function() {
+        this.x += this.vx; this.y += this.vy += opts.gravity;
+        if (this.prevPoints.length > opts.fireworkShardPrevPoints) this.prevPoints.shift();
+        this.prevPoints.push([this.x, this.y]);
+        let lineWidthProportion = this.size / this.prevPoints.length;
+        for (let k = 0; k < this.prevPoints.length - 1; ++k) {
+            let point = this.prevPoints[k], point2 = this.prevPoints[k + 1];
+            ctx.strokeStyle = this.color.replace('alp', k / this.prevPoints.length);
+            ctx.lineWidth = k * lineWidthProportion;
+            ctx.beginPath(); ctx.moveTo(point[0], point[1]); ctx.lineTo(point2[0], point2[1]); ctx.stroke();
+        }
+        if (this.prevPoints[0][1] > hh) this.alive = false;
+    };
+    
     function anim() {
-        let w = (c.width = window.innerWidth);
-        let h = (c.height = window.innerHeight);
-        let ctx = c.getContext('2d');
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 0, w, h);
-
-        ctx.translate(w / 2, h / 2);
-
+        window.requestAnimationFrame(anim);
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
+        ctx.translate(hw, hh);
         let done = true;
         for (let l = 0; l < letters.length; ++l) {
-            letters[l].step(ctx, h);
+            letters[l].step();
             if (letters[l].phase !== 'done') done = false;
         }
-
-        ctx.translate(-w / 2, -h / 2);
-
+        ctx.translate(-hw, -hh);
         if (done) {
             animationCycles++;
             if (animationCycles === 1) {
@@ -144,9 +335,24 @@ let x = setInterval(function() {
             }
             for (let l = 0; l < letters.length; ++l) letters[l].reset();
         }
-        window.requestAnimationFrame(anim);
+    }
+    
+    for (let i = 0; i < opts.strings.length; ++i) {
+        for (let j = 0; j < opts.strings[i].length; ++j) {
+            letters.push(new Letter(opts.strings[i][j],
+                j * opts.charSpacing + opts.charSpacing / 2 - (opts.strings[i].length * opts.charSize) / 2,
+                i * opts.lineHeight + opts.lineHeight / 2 - (opts.strings.length * opts.lineHeight) / 2));
+        }
     }
 
+    window.addEventListener('resize', function() {
+        w = c.width = window.innerWidth;
+        h = c.height = window.innerHeight;
+        hw = w / 2;
+        hh = h / 2;
+        ctx.font = opts.charSize + 'px Verdana';
+    });
+    
     function init() {
       box.addEventListener('click', openBox, false);
       box.addEventListener('click', showfireworks, false);
@@ -177,8 +383,7 @@ let x = setInterval(function() {
 
     function showfireworks() {
       canvasC.style.display = 'initial';
-      initializeLetters();
-      anim();
+      setTimeout(anim, 1500);
 
       window.onYouTubeIframeAPIReady = function() {
         player = new YT.Player('youtube-video');
@@ -209,41 +414,3 @@ let x = setInterval(function() {
     init();
   }
 }, second);
-
-// Die Klassen für die Buchstaben-Animation (stark vereinfacht, da der volle Code sehr lang ist)
-// Dies ist eine verkürzte Version der Animationslogik, die die grundlegende Struktur beibehält.
-function Letter(char, x, y, calc) {
-    this.char = char;
-    this.x = x;
-    this.y = y;
-    let hue = (x / calc.totalWidth) * 360;
-    this.color = 'hsl(' + hue + ',80%,50%)';
-    this.alphaColor = 'hsla(' + hue + ',80%,50%,alp)';
-    this.reset();
-}
-
-Letter.prototype.reset = function() {
-    this.phase = 'firework'; this.tick = 0; this.spawned = false;
-    this.spawningTime = Math.random() * 200; this.reachTime = 30 + Math.random() * 30;
-    this.lineWidth = 5 + Math.random() * 8; this.prevPoints = [[0, window.innerHeight / 2, 0]];
-};
-
-Letter.prototype.step = function(ctx, h) {
-    if (this.phase === 'firework') {
-        if (!this.spawned) {
-            this.tick++;
-            if (this.tick >= this.spawningTime) { this.tick = 0; this.spawned = true; }
-        } else {
-            this.tick++;
-            let proportion = this.tick / this.reachTime;
-            let x = proportion * this.x;
-            let y = h / 2 + Math.sin(proportion * Math.PI / 2) * (this.y - h / 2);
-            this.prevPoints.push([x, y, proportion * this.lineWidth]);
-            if (this.prevPoints.length > 10) this.prevPoints.shift();
-            // (Zeichenlogik hier...)
-            if (this.tick >= this.reachTime) {
-                this.phase = 'done'; // Vereinfacht, um die Schleife zu demonstrieren
-            }
-        }
-    }
-};
