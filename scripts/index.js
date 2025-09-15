@@ -74,7 +74,6 @@ let x = setInterval(function() {
       }
       musicButtonSetupDone = true;
     }
-}
           
   // Dieser Teil läuft, wenn der Countdown abgelaufen ist
   else {
