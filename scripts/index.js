@@ -12,7 +12,7 @@ let player; // Variable für den YouTube Player
 let musicButtonSetupDone = false; // "Flagge" für den Musik-Button
 
 const config = {
-  birthdate: 'Sep 15, 2025 20:11:00', // Dein flexibles Datum mit Uhrzeit
+  birthdate: 'Sep 15, 2025 20:16:00', // Dein flexibles Datum mit Uhrzeit
   name: 'BOAZ'
 };
 
