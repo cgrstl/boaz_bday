@@ -70,7 +70,7 @@ let x = setInterval(function() {
           } else {
             // Musik läuft bereits, also pausieren
             countdownMusic.pause();
-            playMusicBtn.innerText = 'Some music while waiting?'; // Originaltext
+            playMusicBtn.innerText = 'Some Music While Waiting?'; // Originaltext
           }
         }); 
       }
