@@ -18,7 +18,7 @@ let player; // Variable für den YouTube Player
 let musicButtonSetupDone = false; // "Flagge" für den Musik-Button
 
 const config = {
-  birthdate: 'Sep 15, 2025 21:22:00', // Dein flexibles Datum mit Uhrzeit
+  birthdate: 'Sep 15, 2025 21:32:00', // Dein flexibles Datum mit Uhrzeit
   name: 'BOAZ'
 };
 
@@ -567,23 +567,21 @@ let x = setInterval(function() {
         }, 5000); // 5 Sekunden Verzögerung
       });
 
-  // Klick auf "Collect your present" (NEUE LOGIK FÜR SAFARI-KOMPATIBILITÄT)
+  // Klick auf "Collect your present" (KORRIGIERTE URLS FÜR ALLE BROWSER)
       collectGiftBtn.addEventListener('click', () => {
         
         // 1. Definiere deine Zieladresse
         const destinationAddress = "Best Buy, 10799 Washington Boulevard, Culver City, CA 90232";
         const encodedDestination = encodeURIComponent(destinationAddress);
 
-        // 2. Fallback-URL (falls Standort abgelehnt wird)
+        // 2. Fallback-URL (jetzt mit Backticks ` und ${...} )
         const fallbackUrl = `https://www.google.com/maps/search/?api=1&query=${encodedDestination}`;
 
-        // 3. WICHTIG FÜR SAFARI: Öffne das Fenster SOFORT (synchron).
-        // Safari blockiert window.open, das in einer asynchronen Callback (wie Geolocation) aufgerufen wird.
+        // 3. WICHTIG FÜR SAFARI: Öffne das Fenster SOFORT
         const mapWindow = window.open('', '_blank');
         if (mapWindow) {
-          mapWindow.document.write('Please wait, calculating directions...'); // Platzhalter-Text
+          mapWindow.document.write('Please wait, calculating directions...');
         } else {
-          // Pop-up wurde sofort blockiert (selten, aber möglich)
           alert('Please allow pop-ups for this site to see directions.');
           return;
         }
@@ -591,7 +589,7 @@ let x = setInterval(function() {
         // 4. Prüfen, ob der Browser Geolocation unterstützt
         if ('geolocation' in navigator) {
           
-          // 5. Standort abfragen (Nutzer muss zustimmen)
+          // 5. Standort abfragen
           navigator.geolocation.getCurrentPosition(
             
             // SUCCESS: Nutzer hat zugestimmt
@@ -599,28 +597,27 @@ let x = setInterval(function() {
               const lat = position.coords.latitude;
               const lon = position.coords.longitude;
               
-              // Baut die vollständige Routen-URL
+              // Baut die vollständige Routen-URL (jetzt mit Backticks ` und ${...} )
               const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${encodedDestination}`;
               
-              // 6a. Setze die URL des bereits geöffneten Fensters
+              // 6a. Setze die URL
               if (mapWindow) mapWindow.location.href = directionsUrl;
             },
             
             // ERROR: Nutzer hat abgelehnt oder es gab einen Fehler
             (error) => {
               console.warn('Geolocation error:', error.message);
-              // 6b. Setze die Fallback-URL im bereits geöffneten Fenster
+              // 6b. Setze die Fallback-URL
               if (mapWindow) mapWindow.location.href = fallbackUrl;
             }
           );
         } else {
           // Geolocation wird vom Browser nicht unterstützt
           console.warn('Geolocation is not supported by this browser.');
-          // 6c. Setze die Fallback-URL im bereits geöffneten Fenster
+          // 6c. Setze die Fallback-URL
           if (mapWindow) mapWindow.location.href = fallbackUrl;
         }
       });
-
       // --- Events zum Schließen des Videos ---
       closeVideoBtn.addEventListener('click', closeVideo);
       
