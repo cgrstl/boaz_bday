@@ -550,7 +550,7 @@ let x = setInterval(function() {
         }, 5000); // 5 Sekunden Verzögerung
       });
 
-     // Klick auf "Collect your present" (NEUE ROUTEN-LOGIK)
+  // Klick auf "Collect your present" (NEUE ROUTEN-LOGIK)
       collectGiftBtn.addEventListener('click', () => {
         
         // 1. Definiere deine Zieladresse
@@ -559,6 +559,7 @@ let x = setInterval(function() {
 
         // 2. Fallback-URL (falls Standort abgelehnt wird)
         // Zeigt nur den Zielort auf der Karte
+        // *** KORREKTE URL ***
         const fallbackUrl = `https://www.google.com/maps/search/?api=1&query=${encodedDestination}`;
 
         // 3. Prüfen, ob der Browser Geolocation unterstützt
@@ -573,6 +574,7 @@ let x = setInterval(function() {
               const lon = position.coords.longitude;
               
               // Baut die vollständige Routen-URL
+              // *** KORREKTE URL ***
               const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${lat},${lon}&destination=${encodedDestination}`;
               window.open(directionsUrl, '_blank');
             },
