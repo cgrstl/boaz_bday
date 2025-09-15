@@ -22,6 +22,7 @@
   
   <canvas id=c></canvas>
   <canvas id="confetti"></canvas>
+
   <div class="container" id="count">
     <h1 id="head">BOAZ' 30TH BIRTHDAY</h1>
     <ul>
@@ -30,17 +31,10 @@
       <li><span id="minute"></span>minutes</li>
       <li><span id="second"></span>seconds</li>
     </ul>
-    <button id="playMusicBtn" style="display: none;">Some music while waiting?</button>
+    <button id="playMusicBtn" class="pulsating-btn" style="display: none;">Some music while waiting?</button>
   </div>
+
   <div id="merrywrap" class="merrywrap">
-    <canvas id="snowfall"></canvas>
-    <div class="giftbox">
-      <div class="cover">
-        <div></div>
-      </div>
-      <div class="box"></div>
-    </div>
-<div id="merrywrap" class="merrywrap">
     <canvas id="snowfall"></canvas>
     <div class="giftbox">
       <div class="cover">
@@ -51,7 +45,7 @@
   </div>
 
   <div id="wishesBtnContainer" style="display: none;">
-      <button id="wishesBtn">Ready for Birthday wishes from around the world?</button>
+      <button id="wishesBtn" class="pulsating-btn">Ready for Birthday wishes from around the world?</button>
   </div>
 
   <div id="video-overlay">
@@ -69,7 +63,6 @@
 </body>
 
 <script src="https://www.youtube.com/iframe_api"></script>
-
 <script src="scripts/confetti.min.js" charset="utf-8"></script>
 <script src="scripts/index.js" charset="utf-8"></script>
 
