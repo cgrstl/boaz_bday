@@ -188,14 +188,36 @@ li span {
   padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
-  font-family: inherit; /* Nutzt die gleiche Schriftart wie der Rest */
+  font-family: inherit;
   font-size: 0.9em;
   margin-top: 25px;
   transition: all 0.2s ease;
+  /* NEU: Hier weisen wir die Animation zu */
+  animation: pulse 2s infinite;
 }
 
+/* Neuer Hover-Effekt */
 #playMusicBtn:hover {
+  /* Stoppt die Puls-Animation beim Hovern */
+  animation-play-state: paused;
   background-color: rgba(55, 59, 65, 0.05);
   border-color: rgba(55, 59, 65, 0.8);
   color: rgba(55, 59, 65, 0.9);
+  /* Fügt die Vergrößerung hinzu */
+  transform: scale(1.05);
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(55, 59, 65, 0.4);
+  }
+  70% {
+    transform: scale(1.03);
+    box-shadow: 0 0 0 10px rgba(55, 59, 65, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(55, 59, 65, 0);
+  }
 }
