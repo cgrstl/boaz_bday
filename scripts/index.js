@@ -7,7 +7,7 @@ let musicButtonSetupDone = false; // Unsere neue "Flagge"
 
 const config = {
   birthdate: 'Sep 15, 2025 14:00:00', 
-  name: 'Boaz'
+  name: 'BOAZ'
 };
 
 function hideEverything() {
