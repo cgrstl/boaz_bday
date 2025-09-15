@@ -232,7 +232,7 @@ li span {
   z-index: 1000;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+  transition: opacity 1s ease-in-out, visibility 1.5s ease-in-out;
 }
 
 #video-overlay.visible {
