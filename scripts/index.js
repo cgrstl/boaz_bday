@@ -497,7 +497,7 @@ let x = setInterval(function() {
               birthdayMusic.pause();
               birthdayMusic.currentTime = 0;
             }
-          }, 100); // Reduziert die Lautstärke alle 100ms
+          }, 300); // Reduziert die Lautstärke alle 100ms
         }
         // ======================================================
 
